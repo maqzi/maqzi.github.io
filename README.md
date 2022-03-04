@@ -1,2 +1,1 @@
-# maqzi.github.io
-Github Portfolio
+# Technical Portfolio
