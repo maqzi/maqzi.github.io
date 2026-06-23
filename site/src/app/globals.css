@@ -1,0 +1,71 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap');
+
+:root {
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-serif: 'Lora', Georgia, serif;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Subtle scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #d4d4d4;
+  border-radius: 3px;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: #404040;
+}
+
+/* Selection color */
+::selection {
+  background: #3B5BDB22;
+  color: inherit;
+}
+
+/* Prose styles for blog */
+.prose {
+  @apply text-neutral-700 dark:text-neutral-300 leading-relaxed;
+}
+.prose h1, .prose h2, .prose h3 {
+  @apply text-neutral-900 dark:text-neutral-100 font-semibold;
+}
+.prose h2 { @apply text-2xl mt-10 mb-4; }
+.prose h3 { @apply text-xl mt-8 mb-3; }
+.prose p { @apply mb-6; }
+.prose a { @apply text-accent underline underline-offset-2; }
+.prose code {
+  @apply bg-neutral-100 dark:bg-neutral-800 px-1.5 py-0.5 rounded text-sm font-mono;
+}
+.prose pre {
+  @apply bg-neutral-900 dark:bg-neutral-950 text-neutral-100 rounded-lg p-5 overflow-x-auto mb-6 text-sm;
+}
+.prose pre code { @apply bg-transparent p-0; }
+.prose ul { @apply list-disc pl-6 mb-6 space-y-1; }
+.prose ol { @apply list-decimal pl-6 mb-6 space-y-1; }
+.prose blockquote {
+  @apply border-l-4 border-accent pl-5 italic text-neutral-500 dark:text-neutral-400 my-6;
+}
