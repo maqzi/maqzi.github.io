@@ -1,34 +1,18 @@
 ---
 title: "What Changes When You Move from Staff Engineer to Engineering Director"
-date: "2024-09-05"
-excerpt: "The gap between Staff Engineer and Director isn't about coding less. It's about learning to make decisions with incomplete information at a faster pace."
+date: "2025-07-22"
+excerpt: "I expected the job to get less technical. It didn't. What changed was that I had to start deciding things before I understood them."
 tags: ["Leadership", "Career"]
 ---
 
-When I moved from Staff ML Engineer to Director of ML Engineering, I expected the job to get less technical. It didn't. What changed was the *type* of technical decisions I was making — and the time horizon I was making them across.
+A few months into the director job I had to choose a direction for a piece of the alitheia platform that I did not fully understand. Two of my engineers wanted different things, both had reasonable arguments, and the people who actually knew the relevant systems best were the two people disagreeing. As a staff engineer I would have gone and read the code until the answer was obvious. I no longer had time to read the code, and even if I had, reading it would not have resolved a disagreement that was really about two different bets on where the product was going. I had to pick one, knowing I might be picking wrong, because the cost of waiting another two weeks for certainty was higher than the cost of being wrong and correcting.
 
-## What stays the same
+That is the actual shift, and nobody framed it for me this way before it happened. The job did not get less technical. I still write code, less of it, but enough that when I reviewed the architecture for Rules Studio I had recently been in the React codebase and could feel the difference between a clean call and an expensive one. You cannot review a technical decision honestly if you have lost all contact with what implementing it costs. If anything I think about system design more than I used to, because now I am designing for a three to five year horizon instead of for the end of the sprint.
 
-I still write code. Not as much, but enough to stay grounded in the actual difficulty of the work. When I reviewed the architecture for alitheia Rules Studio, I'd been recently in the React codebase. That context matters — you can't review a technical decision well without understanding its implementation cost.
+What changed is the quality of information I get to decide with. As a staff engineer I usually had direct access to the system I was reasoning about. I could run it, break it, read it. As a director I am deciding from summaries, dashboards, and secondhand accounts, and the skill that took me longest to develop was calibrating how much to trust those. A confident status update and a worried one can describe the same project. Learning to tell which signals are load-bearing, and which engineers tend to under or overstate, is most of the job and none of it is in any job description.
 
-I still care about system design. Maybe more than before. The difference is that now I'm designing systems that need to last 3-5 years, not just survive the next sprint.
+The feedback loops got slower too, and that one I felt physically. When I wrote code I knew within hours whether I was wrong. When I set a team's technical direction I might not find out for months, and by then it is tangled up with a dozen other decisions so the lesson is hard to extract cleanly. You have to get comfortable making a call and then living for a long time without knowing if it was the right one.
 
-## What changes
+And the relationships stopped being a nice-to-have and became the thing that determines what we can actually ship. A decision the team does not understand is a decision that gets implemented wrong, slowly, with quiet resentment. So the time I spend with product, with InfoSec, with DevOps, with my own engineers is not overhead around the real work. It increasingly is the real work, which took me a while to accept because it does not feel like building anything.
 
-**The decision surface expands dramatically.** As a Staff engineer, most of my decisions were about systems. As a Director, I make decisions about people, priorities, architecture, resourcing, external partnerships, and organizational structure — often in the same meeting.
-
-**The information quality degrades.** Staff engineers generally have direct access to the systems they're deciding about. Directors are often deciding based on summaries, metrics, and secondhand accounts. Learning to calibrate confidence under those conditions is the core skill.
-
-**The feedback loops lengthen.** When I wrote code, I knew within hours if my approach was wrong. When I set a team's technical direction, I might not know for months. This requires a different relationship with uncertainty.
-
-**The interpersonal work becomes load-bearing.** As a Staff engineer, relationships mattered but they weren't the main job. As a Director, the quality of my relationships with product, InfoSec, DevOps, business stakeholders, and my own team directly determines what we can ship. A technical decision that the team doesn't understand is a technical decision that won't get implemented correctly.
-
-## The thing nobody tells you
-
-The hardest adjustment isn't the scope or the pace. It's learning to make decisions that you *know* are wrong in some dimension — because the alternative is making no decision, which is worse.
-
-Selecting Munich Re's Oxygen leadership cohort, which recognizes high-potential leaders in the top 20 globally, was partly a recognition of this: the ability to operate effectively when you don't have complete information.
-
-The job of a technical leader is not to be right. It's to make good decisions with the information available, build systems that can correct for mistakes, and create teams that can execute regardless of which direction turns out to be wrong.
-
-That's a different skill than being a great engineer. But it's one you can develop — if you're willing to be uncomfortable for a while.
+I will not pretend I have this figured out. Munich Re put me into Oxygen, their accelerated leadership program for high-potential leaders across the company, partly on the strength of being able to operate when the information is incomplete, and I still find that the hardest part of the role. The job of a technical leader is not to be right. It is to make a decent decision with what you have, build systems and teams that can absorb it when you turn out to be wrong, and keep the loop short enough that being wrong is survivable. That is a genuinely different skill from being a strong engineer, and the uncomfortable news is that the only way I know to learn it is to do it badly for a while first.

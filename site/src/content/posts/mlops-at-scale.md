@@ -1,38 +1,22 @@
 ---
 title: "What MLOps Actually Looks Like at Enterprise Scale"
-date: "2025-03-15"
-excerpt: "Building the IAMD platform taught me that the hardest part of MLOps isn't the tooling — it's the organizational coordination required to make it stick."
+date: "2026-02-11"
+excerpt: "We cut model deployment times by 95 percent at Munich Re. The tooling was the part I got right early. The part I underestimated was getting people to use it."
 tags: ["MLOps", "ML Infrastructure", "Leadership"]
 ---
 
-When I started designing the Integrated Analytics ML Deployment platform at Munich Re, I made a mistake that most ML platform engineers make: I thought the problem was technical.
+I went into the IAMD platform thinking it was an infrastructure problem. Pick the right stack, wire up the pipelines, make deployments reproducible, and adoption would follow because the thing was obviously better. That assumption cost me about a quarter.
 
-It's not. Or rather — it's only 40% technical.
+The stack itself was not the interesting part. GitOps pipelines, Docker, MLflow for tracking, Kubernetes for serving, Postgres for metadata, Terraform underneath all of it. If you have built one of these you know the shape. The three rules I cared about were that every training run logged its parameters and artifacts without anyone having to remember to do it, that every deployment went through a pull request so the cluster state was always reconstructable from the repo, and that the US and Canada tenants ran identical stage configs so "works in dev" actually meant something.
 
-The rest is organizational coordination, change management, and stakeholder alignment across teams that have spent years doing things their own way. Here's what I learned from reducing model deployment times by 95% and getting 100% of our use cases onto a single platform within a year.
+The one genuinely hard engineering problem was batch inference. We had models scoring millions of records, and the naive long-running Python job took eight hours. Moving it onto Azure Batch across ephemeral worker pools got it to four minutes. But I want to be honest about how that happened, because it is the whole point of this post: the speedup did not come from knowing Azure Batch well. It came from sitting next to the engineers who wrote each model and learning how their data was actually accessed, which records were hot, where the joins blew up. The infrastructure knowledge was commodity. The model-specific knowledge was not, and the only way to get it was to spend time with people who were busy and did not initially see why I needed their afternoon.
 
-## The technical layer is the easy part
+That turned out to be the recurring lesson. The platform did not get adopted because it was good. It got adopted when using it became less work than not using it.
 
-We chose a fairly standard stack: GitOps pipelines feeding Docker containers, MLflow for experiment tracking, Kubernetes for serving, Postgres for metadata, Terraform for IaC. Nothing exotic. The principles were:
+For a while it was not. If you wanted to deploy a model the platform way, you had to learn our conventions, structure your repo our way, and trust a pipeline you could not see into. Rolling your own deployment was familiar and right there. So people rolled their own, and I would find out weeks later that another model was running in production held together by a cron job and good intentions. I stopped blaming the engineers for this around the time I realized they were behaving completely rationally.
 
-- **Reproducibility by default.** Every training run logs parameters, metrics, and artifacts to MLflow. No exceptions.
-- **GitOps over ClickOps.** Every deployment is a pull request. The cluster state is always derivable from the repository.
-- **Parity across environments.** US and CA tenants share identical SDLC stage configurations. If it works in dev, it works in prod.
+So we spent a few months on the unglamorous work of making the happy path frictionless. One command to register a model. One pull request to deploy it. Sensible defaults so you did not have to understand the whole system to ship the common case. None of this is impressive to write down. All of it is what actually moved the adoption numbers.
 
-The hardest technical challenge was batch inference. We had models that needed to score millions of records — and the naive approach (a long-running Python process) was taking 8 hours. Using Azure Batch to distribute work across ephemeral worker pools got us to 4 minutes. But that optimization required understanding the data access patterns of each model, which meant sitting with the ML engineers who built them.
+I also started running the platform like a product instead of a project, which mostly meant two changes. I published a roadmap every quarter and asked teams what was still painful, then I actually changed the roadmap based on what they said. And I tracked a satisfaction number alongside the performance ones. We landed around 8.5 out of 10 on the quarterly survey after a year, and that number told me more than the deployment metric did. The 95 percent reduction was the figure I reported upward. The satisfaction score was the one that told me whether the thing would still be alive in two years.
 
-## The organizational layer is where platforms succeed or fail
-
-Here's what actually drove adoption:
-
-**We made the default path the easy path.** If following the platform conventions was harder than rolling your own deployment, people wouldn't use it. We spent months making the happy path frictionless — one command to register a model, one PR to deploy.
-
-**We measured what users cared about.** Our "zen-ness" score (stakeholder satisfaction) was 8.5/10 after a year. That number came from quarterly surveys where we asked direct questions: *What's still painful? What did we get right? What would you give up?*
-
-**We managed the roadmap like a product.** Every quarter I published a roadmap and invited input. Teams knew where the platform was going, which meant they could plan their own work around it — instead of working around our inconsistency.
-
-## The lesson
-
-An MLOps platform is a product. It has users, it has a roadmap, it has user research. The engineers who build it are also product managers. The teams that ignore this end up with excellent internal tools that nobody uses.
-
-The 95% deployment time reduction was a nice metric to report upward. The 8.5/10 satisfaction score was the one that actually told me whether we were building something worth maintaining.
+If you are building an internal platform, the failure mode is not technical. It is shipping something genuinely excellent that nobody uses because the team that built it never treated adoption as their problem. The engineers building the platform are also its product managers, whether they want that job or not.

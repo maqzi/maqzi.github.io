@@ -1,40 +1,20 @@
 ---
 title: "The Gap Between GenAI Demos and Enterprise AI Products"
-date: "2025-01-20"
-excerpt: "Most GenAI demos are impressive. Most GenAI products are disappointments. The difference is rarely the model — it's everything around it."
+date: "2025-11-03"
+excerpt: "The LLM integration in RuleAI took about two weeks. The four months after that were the actual job."
 tags: ["GenAI", "AI Products", "Engineering"]
 ---
 
-When I built RuleAI — a GenAI tool that automates underwriting impairment rule creation from documentation — the core LLM integration took about two weeks. The remaining four months were spent on everything else.
+RuleAI automates the creation of underwriting impairment rules from documentation. The first working version, the part you would put in a demo, took roughly two weeks. Text goes in, an LLM returns structured rules, everyone in the room nods. Then I spent four months on everything the demo did not show, and that ratio is the only thing worth knowing about building GenAI products inside a real company.
 
-This is the gap nobody talks about when they demo a ChatGPT wrapper.
+The first wall was that prompts which work on most inputs fail quietly on the rest. We were processing more than forty different impairments, each with its own documentation conventions, terminology, and edge cases. A prompt that handled eighty percent of them looked great in a demo and was useless in production, because the twenty percent it dropped were not random. They clustered on exactly the impairments that were complicated enough to be worth automating in the first place. There is no clever prompt that fixes this. You find the failures by running real inputs and looking at what broke, over and over.
 
-## What the demo skips
+Which meant the thing I actually had to build first was evaluation, not generation. How do you know a generated rule is correct? You need a ground truth set, a way to compare against it, and a human review path for the cases the comparison flags. That harness took longer than the feature it was checking, and it was the right order to do things in. Optimizing a prompt before you can measure whether the output is correct is just moving in the dark with confidence.
 
-Here's what a GenAI demo typically shows: you input some text, an LLM returns structured output, the audience is impressed. Here's what the demo doesn't show:
+The other thing the demo hides is that RuleAI did not live alone. Its output fed into alitheia's Rules Designer, which had a real data model, real validation logic, and a client-facing UI. So every LLM response had to survive schema validation and business rule checks and a human review queue before it touched anything a customer would see. We never asked the model for free-form text. Every prompt ended in a schema and a hard instruction to fill it, because structured output is the only kind you can validate cheaply, and validation is the only thing standing between you and silently shipping a wrong underwriting rule.
 
-**Prompt brittleness.** Prompts that work on 80% of inputs quietly fail on the other 20%. When you're processing 45+ underwriting impairments, each with its own documentation style, terminology, and edge cases, that 20% matters enormously.
+For a tool making real risk decisions, the model was the first draft and a person was the editor, by design. Reviewers were the expected path, not the error handler you fall back to when something breaks. That framing changed how we built the queue, how we surfaced model confidence, and how we handled the cases where the LLM returned something we did not expect. Those got flagged for a human, not retried until they looked plausible. A silent wrong answer is worse than a loud failure, and in an AI system the silent ones are the default unless you work to prevent them.
 
-**Evaluation infrastructure.** How do you know the generated rules are correct? You need a ground truth dataset, a comparison framework, and human review workflows — before you ship, and continuously after. Building this took longer than the feature itself.
+Cost was the last thing I expected to spend real time on and one of the places we got the most leverage. Token spend compounds in ways that do not show up until you are at volume. We profiled the prompts, found the expensive patterns, and cached the documentation chunks that had already been processed, which cut costs by around sixty percent without touching quality.
 
-**Integration surface area.** RuleAI didn't exist in isolation. It fed into alitheia's Rules Designer, which had its own data model, validation logic, and client-facing UI. Every LLM output had to pass through schema validation, business rule checks, and a human review queue before it touched the platform.
-
-**Latency and cost at scale.** Token costs compound fast. We profiled every prompt, identified the expensive patterns, and optimized heavily. Caching intermediate results — documentation chunks that had already been processed — cut costs by 60%.
-
-## What actually makes GenAI products work
-
-**Constrained output formats.** We never asked the LLM to produce free-form text. Every prompt ended with a schema definition and explicit instructions for structured output. Structured generation (JSON mode, function calling) made validation tractable.
-
-**Human-in-the-loop by default.** For an underwriting tool processing real risk decisions, the LLM is a first draft, not a final answer. We designed the workflow so human review was the expected path, not an error handler.
-
-**Systematic prompt management.** Prompts are code. They belong in version control, they have tests, and they have owners. We used a simple YAML-based prompt registry with per-impairment customizations.
-
-**Graceful degradation.** When the LLM returned something unexpected, the system flagged it for manual handling rather than silently producing bad output. Silent failures in AI systems are the worst kind.
-
-## The real lesson
-
-The model is the least important technical decision in a GenAI product. The important decisions are about data quality, evaluation methodology, human workflows, and error handling. Teams that spend most of their time on prompt engineering are usually avoiding the harder work.
-
-Build the evaluation harness before you optimize the prompts. Build the human review workflow before you trust the outputs. Build the error handling before you go to production.
-
-The demo is easy. The product is the hard part.
+None of the hard parts were about the model. The model was close to the least important decision in the whole system. The decisions that mattered were about data quality, how we evaluated outputs, where humans sat in the loop, and what happened when things went wrong. When I see a team spending most of its time on prompt engineering, I usually read it as a team avoiding the harder and less fun work that actually determines whether the product survives contact with production.
